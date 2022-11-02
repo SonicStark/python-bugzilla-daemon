@@ -1,18 +1,21 @@
-[![CI](https://github.com/python-bugzilla/python-bugzilla/workflows/CI/badge.svg)](https://github.com/python-bugzilla/python-bugzilla/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/python-bugzilla/python-bugzilla/branch/main/graph/badge.svg?token=4R3FR4RVH4)](https://codecov.io/gh/python-bugzilla/python-bugzilla)
-[![PyPI](https://img.shields.io/pypi/v/python-bugzilla)](https://pypi.org/project/python-bugzilla/)
+# python-bugzilla-mi
 
-# python-bugzilla
+As you can see, this project is a fork of [python-bugzilla/python-bugzilla](https://github.com/python-bugzilla/python-bugzilla). A ***Machine Interface*** (i.e. ***MI***) is used as wrapper (or for replacing in some sense) on all the original features. And the concept of ***MI*** originates from the well-known [GDB: The GNU Project Debugger](https://www.sourceware.org/gdb/) with docs at [GDB User Manual - The GDB/MI Interface](https://sourceware.org/gdb/current/onlinedocs/gdb/GDB_002fMI.html#GDB_002fMI).
 
-This package provides two bits:
+The purpose of introducing **MI** in *python-bugzilla-mi* is also to support using it as just one small component of a larger system.
 
-* `bugzilla` python module for talking to a [Bugzilla](https://www.bugzilla.org/) instance over XMLRPC or REST
-* `/usr/bin/bugzilla` command line tool for performing actions from the command line: create or edit bugs, various queries, etc.
 
-This was originally written specifically for [Red Hat's Bugzilla instance](https://bugzilla.redhat.com)
-and is used heavily at Red Hat and in Fedora, but it should be
-generically useful.
+## Workflow
 
-You can find some code examples in the [examples](examples) directory.
+![](./docs/assets/workflow.drawio.png)
 
-For questions about submitting patches, see [CONTRIBUTING.md](CONTRIBUTING.md)
+*python-bugzilla-mi* is very different from *python-bugzilla* because **MI** replaces most of original **CLI** features. So it will be treated as an independent branch and the latest features in *python-bugzilla* will be merged into this branch in time. 
+
+:warning:The original project has been greatly simplified due to limited time and resources of the developers. If you are not a member of our organization, please be careful before running the scripts and make sure that you know its difference from [python-bugzilla/python-bugzilla](https://github.com/python-bugzilla/python-bugzilla) and understand the possible consequences (for example your Bugzilla account may be judged as suspicious by the administrator and then be disabled).
+
+
+## Documentation 
+
+`bugzilla-mi` is the entrance of *python-bugzilla-mi* in which you can talking to a [Bugzilla](https://www.bugzilla.org/) instance over XMLRPC or REST. Also original  features about performing actions from the command line is still available but with a different usage, such as create or edit bugs, various queries, etc.
+
+Please browse things in `docs` for more details.
