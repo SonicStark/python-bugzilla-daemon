@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-# This is a small wrapper script to simplify running the 'bugzilla'
-# cli tool from a git checkout
+# Wrapper script to simplify running the 'bugzilla' MI tool
 
-from bugzilla import _cli
-_cli.main()
+from bugzilla import _mi
+_mi.main()
