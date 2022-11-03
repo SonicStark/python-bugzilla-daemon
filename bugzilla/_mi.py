@@ -62,6 +62,20 @@ FLAG_TAIL_ILOGIN = "{}ILOGIN{}".format(FTAIL_PRE,FTAIL_SUF)
 
 
 ################
+# Patch output #
+################
+
+class ArgumentParser_patched(argparse.ArgumentParser):
+    """ Patch `argparse.ArgumentParser` to fit MI
+    """
+    def _print_message(self, message, file=None):
+            if message:
+                sys.stdout.write(FLAG_HEAD_ARGINF)
+                sys.stdout.write(message)
+                sys.stdout.write(FLAG_TAIL_ARGINF)
+                sys.stdout.flush()
+
+################
 # Util helpers #
 ################
 
@@ -116,7 +130,7 @@ def setup_logging(debug, verbose):
 
 def _setup_root_parser():
     epilog = 'Try "bugzilla COMMAND --help" for command-specific help.'
-    p = argparse.ArgumentParser(epilog=epilog)
+    p = ArgumentParser_patched(epilog=epilog)
 
     default_url = bugzilla.Bugzilla.get_rcfile_default_url()
     if not default_url:
