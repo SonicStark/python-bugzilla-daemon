@@ -42,6 +42,24 @@ log = logging.getLogger(bugzilla.__name__)
 DEFAULT_BZ_LOG = os.getenv("__BUGZILLA_LOG_FILE") or os.path.join(
     os.path.abspath(__file__), datetime.datetime.now().strftime("../BZMI%y%m%d%H%M%S.log"))
 
+FHEAD_PRE = "\n|v>"
+FHEAD_SUF = "<v|\n"
+
+FTAIL_PRE = "\n|^>"
+FTAIL_SUF = "<^|\n"
+
+FLAG_HEAD_EXCEPT = "{}EXCEPT{}".format(FHEAD_PRE,FHEAD_SUF)
+FLAG_TAIL_EXCEPT = "{}EXCEPT{}".format(FTAIL_PRE,FTAIL_SUF)
+
+FLAG_HEAD_STRING = "{}STRING{}".format(FHEAD_PRE,FHEAD_SUF)
+FLAG_TAIL_STRING = "{}STRING{}".format(FTAIL_PRE,FTAIL_SUF)
+
+FLAG_HEAD_ARGINF = "{}ARGINF{}".format(FHEAD_PRE,FHEAD_SUF)
+FLAG_TAIL_ARGINF = "{}ARGINF{}".format(FTAIL_PRE,FTAIL_SUF)
+
+FLAG_HEAD_ILOGIN = "{}ILOGIN{}".format(FHEAD_PRE,FHEAD_SUF)
+FLAG_TAIL_ILOGIN = "{}ILOGIN{}".format(FTAIL_PRE,FTAIL_SUF)
+
 
 ################
 # Util helpers #
