@@ -17,6 +17,7 @@ import argparse
 import base64
 import datetime
 import errno
+import getpass
 import json
 import locale
 import logging
@@ -60,6 +61,10 @@ FLAG_TAIL_ARGINF = "{}ARGINF{}".format(FTAIL_PRE,FTAIL_SUF)
 FLAG_HEAD_ILOGIN = "{}ILOGIN{}".format(FHEAD_PRE,FHEAD_SUF)
 FLAG_TAIL_ILOGIN = "{}ILOGIN{}".format(FTAIL_PRE,FTAIL_SUF)
 
+swrite = sys.stdout.write
+sflush = sys.stdout.flush
+sreadl = sys.stdin.readline
+
 
 ################
 # Patch output #
@@ -69,11 +74,80 @@ class ArgumentParser_patched(argparse.ArgumentParser):
     """ Patch `argparse.ArgumentParser` to fit MI
     """
     def _print_message(self, message, file=None):
-            if message:
-                sys.stdout.write(FLAG_HEAD_ARGINF)
-                sys.stdout.write(message)
-                sys.stdout.write(FLAG_TAIL_ARGINF)
-                sys.stdout.flush()
+        """ @override """
+        if message:
+            swrite(FLAG_HEAD_ARGINF)
+            swrite(message)
+            swrite(FLAG_TAIL_ARGINF)
+            sflush()
+
+
+class Bugzilla_patched(bugzilla.Bugzilla):
+    """ Patch `bugzilla.Bugzilla` to fit MI
+    """
+    def interactive_save_api_key(self):
+        """ @override """
+        swrite(FLAG_HEAD_ILOGIN)
+        swrite('API Key: ')
+        swrite(FLAG_TAIL_ILOGIN)
+        sflush()
+        api_key = sreadl().strip()
+
+        self.disconnect()
+        self.api_key = api_key
+
+        log.info('Checking API key... ')
+        self.connect()
+
+        if not self.logged_in:  # pragma: no cover
+            raise bugzilla.BugzillaError("Login with API_KEY failed")
+        log.info('API Key accepted')
+
+        wrote_filename = self._rcfile.save_api_key(self.url, self.api_key)
+        log.info("API key written to filename=%s", wrote_filename)
+
+        swrite(FLAG_HEAD_ILOGIN)
+        swrite("Login successful.")
+        if wrote_filename:
+            swrite(" API key written to %s" % wrote_filename)
+        swrite(FLAG_TAIL_ILOGIN)
+        sflush()
+
+    def interactive_login(self, user=None, password=None, force=False,
+                          restrict_login=None):
+        """ @override """
+        ignore = force
+        log.debug('Calling interactive_login')
+
+        if not user:
+            swrite(FLAG_HEAD_ILOGIN)
+            swrite('Bugzilla Username: ')
+            swrite(FLAG_TAIL_ILOGIN)
+            sflush()
+            user = sreadl().strip()
+        if not password:
+            swrite(FLAG_HEAD_ILOGIN)
+            swrite('Bugzilla Password: ')
+            swrite(FLAG_TAIL_ILOGIN)
+            sflush()
+            password = getpass.getpass()
+
+        log.info('Logging in... ')
+        out = self.login(user, password, restrict_login)
+        swrite("Login successful.")
+        if "token" not in out:
+            swrite(" However no token was returned.")
+        else:
+            if not self.tokenfile:
+                swrite(" Token not saved to disk.")
+            else:
+                swrite(" Token cache saved to %s" % self.tokenfile)
+            if self._get_version() >= 5.0:
+                swrite("\nToken usage is deprecated. ")
+                swrite("Consider using bugzilla API keys instead. ")
+                swrite("See `man bugzilla` for more details.")
+        sflush()
+
 
 ################
 # Util helpers #
