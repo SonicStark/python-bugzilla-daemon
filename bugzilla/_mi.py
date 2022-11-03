@@ -19,7 +19,7 @@ import datetime
 import errno
 import json
 import locale
-from logging import getLogger, DEBUG, INFO, WARN, StreamHandler, Formatter
+import logging
 import os
 import re
 import socket
@@ -37,7 +37,10 @@ DEFAULT_BZ = 'https://bugzilla.redhat.com'
 
 format_field_re = re.compile("%{([a-z0-9_]+)(?::([^}]*))?}")
 
-log = getLogger(bugzilla.__name__)
+log = logging.getLogger(bugzilla.__name__)
+
+DEFAULT_BZ_LOG = os.getenv("__BUGZILLA_LOG_FILE") or os.path.join(
+    os.path.abspath(__file__), datetime.datetime.now().strftime("../BZMI%y%m%d%H%M%S.log"))
 
 
 ################
@@ -72,21 +75,21 @@ def open_without_clobber(name, *args):
 
 
 def setup_logging(debug, verbose):
-    handler = StreamHandler(sys.stderr)
-    handler.setFormatter(Formatter(
-        "[%(asctime)s] %(levelname)s (%(module)s:%(lineno)d) %(message)s",
-        "%H:%M:%S"))
+    handler = logging.FileHandler(DEFAULT_BZ_LOG, mode="a", encoding="utf-8", delay=False)
+    handler.setFormatter(logging.Formatter(
+        "%(asctime)s,%(msecs)d %(filename)s:%(lineno)d %(levelname)s: %(message)s",
+        datefmt="%y.%m.%d %H:%M:%S"))
     log.addHandler(handler)
 
     if debug:
-        log.setLevel(DEBUG)
+        log.setLevel(logging.DEBUG)
     elif verbose:
-        log.setLevel(INFO)
+        log.setLevel(logging.INFO)
     else:
-        log.setLevel(WARN)
+        log.setLevel(logging.WARN)
 
     if _is_unittest_debug():
-        log.setLevel(DEBUG)  # pragma: no cover
+        log.setLevel(logging.DEBUG)  # pragma: no cover
 
 
 ##################
