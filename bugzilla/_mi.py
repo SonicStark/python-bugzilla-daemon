@@ -111,6 +111,7 @@ def _print_message_patched(self, message, file=None):
         swrite(FLAG_TAIL_ARGINF)
         sflush()
 
+
 def exit_patched(self, status=0, message=None):
     """ A patch on `argparse.ArgumentParser`
 
@@ -123,6 +124,7 @@ def exit_patched(self, status=0, message=None):
             "\nArgumentParser exit with status {}".format(status)
         self._print_message(emsg)
     raise InterruptLoop
+
 
 class Bugzilla_patched(bugzilla.Bugzilla):
     """ Patch `bugzilla.Bugzilla` to fit MI
@@ -208,6 +210,7 @@ def setup_logging():
         "%(asctime)s,%(msecs)d %(filename)s:%(lineno)d %(levelname)s: %(message)s",
         datefmt="%y.%m.%d %H:%M:%S"))
     log.addHandler(handler)
+
 
 def level_logging(debug, verbose):
     """ Change log level on the fly
@@ -405,6 +408,7 @@ def _do_get_attach(bz, opt):
     swrite(FLAG_TAIL_ATTACH)
     sflush()
 
+
 def _do_set_attach(bz, opt, parser):
     """ (Patched version) 
     Replace original print statement;
@@ -551,11 +555,20 @@ def _main(unittest_bz_instance):
         log.debug("Bugzilla module: %s", bugzilla)
         NewAct = NewOpt.command
 
-        if unittest_bz_instance:
-            bz = unittest_bz_instance
-        else:
-            bz = _make_bz_instance(NewOpt, force_new=bz_REFRESH)
-            bz_REFRESH = False
+        try:
+            if unittest_bz_instance:
+                bz = unittest_bz_instance
+            else:
+                bz = _make_bz_instance(NewOpt, force_new=bz_REFRESH)
+                bz_REFRESH = False
+        except Exception as E:
+            swrite(FLAG_HEAD_EXCEPT)
+            swrite("CANNOT create the instance of `bugzilla.Bugzilla` ")
+            swrite("with args ` %s ` because of " % NewCmd)
+            swrite("%s: %s" %(E.__class__.__name__,str(E)))
+            swrite(FLAG_TAIL_EXCEPT)
+            sflush()
+            continue
 
         try:
             # Handle login options
@@ -628,6 +641,7 @@ def _main(unittest_bz_instance):
             swrite(FLAG_TAIL_EXCEPT)
             bz_REFRESH = True
             continue
+
 
 def main(unittest_bz_instance=None):
     """ (Patched version)
