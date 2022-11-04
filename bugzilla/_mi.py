@@ -17,13 +17,11 @@ import datetime
 import errno
 import getpass
 import json
-import locale
 import logging
 import os
 import re
 import socket
 import sys
-import tempfile
 import types
 import urllib.parse
 import xmlrpc.client
@@ -86,6 +84,8 @@ swrite = sys.stdout.write
 sflush = sys.stdout.flush
 sreadl = sys.stdin.readline
 
+__GLOBAL_CACHE_BZI = None
+__GLOBAL_CACHE_ARG = None
 
 ################
 # Patch output #
@@ -441,28 +441,37 @@ def _do_set_attach(bz, opt, parser):
 # Main handling #
 #################
 
-def _make_bz_instance(opt):
+def _make_bz_instance(opt, force_new=False):
+    """ (Patched version)
+    Build a new Bugzilla instance we will use
+    if necessary. Otherwise return the old one.
     """
-    Build the Bugzilla instance we will use
-    """
+    global __GLOBAL_CACHE_BZI
+    global __GLOBAL_CACHE_ARG
+    
     if opt.bztype != 'auto':
         log.info("Explicit --bztype is no longer supported, ignoring")
 
-    cookiefile = None
-    tokenfile = None
-    use_creds = False
+    new_ARG = {
+        "url"        : opt.bugzilla,
+        "cookiefile" : None,
+        "tokenfile"  : None,
+        "sslverify"  : opt.sslverify,
+        "use_creds"  : False,
+        "cert"       : opt.cert
+    }
     if opt.cache_credentials:
-        cookiefile = opt.cookiefile or -1
-        tokenfile = opt.tokenfile or -1
-        use_creds = True
+        new_ARG["cookiefile"] = opt.cookiefile or -1
+        new_ARG["tokenfile" ] = opt.tokenfile  or -1
+        new_ARG["use_creds" ] = True
 
-    return Bugzilla_patched(
-        url=opt.bugzilla,
-        cookiefile=cookiefile,
-        tokenfile=tokenfile,
-        sslverify=opt.sslverify,
-        use_creds=use_creds,
-        cert=opt.cert)
+    if (force_new is True) or (new_ARG != __GLOBAL_CACHE_ARG):
+        new_BZI = Bugzilla_patched(**new_ARG)
+        __GLOBAL_CACHE_ARG = new_ARG
+        __GLOBAL_CACHE_BZI = new_BZI
+        return new_BZI
+    else:
+        return __GLOBAL_CACHE_BZI
 
 
 def _handle_login(opt, action, bz):
