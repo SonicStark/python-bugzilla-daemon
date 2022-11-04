@@ -70,6 +70,12 @@ FLAG_TAIL_EXCEPT = "{}EXCEPT{}".format(FTAIL_PRE,FTAIL_SUF)
 FLAG_HEAD_STRING = "{}STRING{}".format(FHEAD_PRE,FHEAD_SUF)
 FLAG_TAIL_STRING = "{}STRING{}".format(FTAIL_PRE,FTAIL_SUF)
 
+FLAG_HEAD_FORMAT = "{}FORMAT{}".format(FHEAD_PRE,FHEAD_SUF)
+FLAG_TAIL_FORMAT = "{}FORMAT{}".format(FTAIL_PRE,FTAIL_SUF)
+
+FLAG_HEAD_ATTACH = "{}ATTACH{}".format(FHEAD_PRE,FHEAD_SUF)
+FLAG_TAIL_ATTACH = "{}ATTACH{}".format(FTAIL_PRE,FTAIL_SUF)
+
 FLAG_HEAD_ARGINF = "{}ARGINF{}".format(FHEAD_PRE,FHEAD_SUF)
 FLAG_TAIL_ARGINF = "{}ARGINF{}".format(FTAIL_PRE,FTAIL_SUF)
 
@@ -218,8 +224,8 @@ def setup_parser():
     Redirect argparse output to stdout with our syntax
     """
     rootparser = _setup_root_parser()
-    rootparser._print_message = types.MethodType(_print_message_patched, rootparser)
-    rootparser.exit = types.MethodType(exit_patched, rootparser)
+    rootparser._print_message = types.MethodType(_print_message_patched, rootparser)#Monkey Patch
+    rootparser.exit           = types.MethodType(exit_patched          , rootparser)#Monkey Patch
     subparsers = rootparser.add_subparsers(dest="command")
     subparsers.required = True
     _setup_action_new_parser(subparsers)
@@ -236,7 +242,7 @@ def setup_parser():
 ####################
 
 def _do_info(bz, opt):
-    """
+    """ (Patched version)
     Handle the 'info' subcommand
     """
     # All these commands call getproducts internally, so do it up front
@@ -265,50 +271,62 @@ def _do_info(bz, opt):
     bz.refresh_products(names=productname and [productname] or None,
             include_fields=include_fields)
 
+    swrite(FLAG_HEAD_STRING)
     if opt.products:
         for name in sorted([p["name"] for p in bz.getproducts()]):
-            print(name)
+            swrite("%s\n" % name)
 
     elif fastcomponents:
         for name in sorted(bz.getcomponents(productname)):
-            print(name)
+            swrite("%s\n" % name)
 
     elif opt.components:
         details = bz.getcomponentsdetails(productname)
         for name in sorted(_filter_components(details)):
-            print(name)
+            swrite("%s\n" % name)
 
     elif opt.versions:
         proddict = bz.getproducts()[0]
         for v in proddict['versions']:
-            print(str(v["name"] or ''))
+            swrite("%s\n" % str(v["name"] or ''))
 
     elif opt.component_owners:
         details = bz.getcomponentsdetails(productname)
         for c in sorted(_filter_components(details)):
-            print("%s: %s" % (c, details[c]['default_assigned_to']))
+            swrite("%s: %s\n" % (c, details[c]['default_assigned_to']))
+    swrite(FLAG_TAIL_STRING)
+    sflush()
 
 
 def _format_output_json(buglist):
+    """ (Patched version) """
     out = {"bugs": [b.get_raw_data() for b in buglist]}
-    s = json.dumps(out, default=_xmlrpc_converter, indent=2, sort_keys=True)
-    print(s)
+    s = json.dumps(out, default=_xmlrpc_converter, indent=None, sort_keys=True)
+    swrite(FLAG_HEAD_STRING)
+    swrite(s)
+    swrite(FLAG_TAIL_STRING)
+    sflush()
 
 
 def _format_output_raw(buglist):
+    """ (Patched version) """
+    swrite(FLAG_HEAD_STRING)
     for b in buglist:
-        print("Bugzilla %s: " % b.bug_id)
+        swrite("Bugzilla %s: \n" % b.bug_id)
         SKIP_NAMES = ["bugzilla"]
         for attrname in sorted(b.__dict__):
             if attrname in SKIP_NAMES:
                 continue
             if attrname.startswith("_"):
                 continue
-            print("ATTRIBUTE[%s]: %s" % (attrname, b.__dict__[attrname]))
-        print("\n\n")
+            swrite("ATTRIBUTE[%s]: %s\n" % (attrname, b.__dict__[attrname]))
+        swrite("\n*-*-*-*-*\n")
+    swrite(FLAG_TAIL_STRING)
+    sflush()
 
 
 def _format_output(bz, opt, buglist):
+    """ (Patched version) """
     if opt.output in ['raw', 'json']:
         include_fields = None
         exclude_fields = None
@@ -331,14 +349,22 @@ def _format_output(bz, opt, buglist):
             _format_output_raw(buglist)
         return
 
+    swrite(FLAG_HEAD_FORMAT)
     for b in buglist:
         # pylint: disable=cell-var-from-loop
         def cb(matchobj):
             return _bug_field_repl_cb(bz, b, matchobj)
-        print(format_field_re.sub(cb, opt.outputformat))
+        swrite(format_field_re.sub(cb, opt.outputformat))
+        swrite("\n")
+    swrite(FLAG_TAIL_FORMAT)
+    sflush()
 
 
 def _do_get_attach(bz, opt):
+    """ (Patched version)
+    Replace original print statement;
+    Add close operation to avoid unreleased sth when running MI;
+    """
     data = {}
 
     def _process_attachment_data(_attlist):
@@ -352,6 +378,7 @@ def _do_get_attach(bz, opt):
         _process_attachment_data(
             bz.get_attachments(None, opt.get)["attachments"].values())
 
+    swrite(FLAG_HEAD_ATTACH)
     for attdata in data.values():
         is_obsolete = attdata.get("is_obsolete", None) == 1
         if opt.ignore_obsolete and is_obsolete:
@@ -363,10 +390,18 @@ def _do_get_attach(bz, opt):
         while data:
             outfile.write(data)
             data = att.read(4096)
-        print("Wrote %s" % outfile.name)
-
+        swrite("Wrote %s\n" % outfile.name)
+        att.close()
+        outfile.close()
+    swrite(FLAG_TAIL_ATTACH)
+    sflush()
 
 def _do_set_attach(bz, opt, parser):
+    """ (Patched version) 
+    Replace original print statement;
+    Remove invalid features when running MI;
+    Add close operation to avoid unreleased sth when running MI;
+    """
     if not opt.ids:
         parser.error("Bug ID must be specified for setting attachments")
 
@@ -376,17 +411,8 @@ def _do_set_attach(bz, opt, parser):
         fileobj = open(opt.file, "rb")
     else:
         # piped input on stdin
-        if not opt.desc:
-            parser.error("--description must be specified if passing "
-                         "file on stdin")
-
-        fileobj = tempfile.NamedTemporaryFile(prefix="bugzilla-attach.")
-        data = sys.stdin.read(4096)
-
-        while data:
-            fileobj.write(data.encode(locale.getpreferredencoding()))
-            data = sys.stdin.read(4096)
-        fileobj.seek(0)
+        parser.error("Unsupported operation because "
+                     "`sys.stdin.isatty()` returns `False`")
 
     kwargs = {}
     if opt.file:
@@ -402,9 +428,13 @@ def _do_set_attach(bz, opt, parser):
     desc = opt.desc or os.path.basename(fileobj.name)
 
     # Upload attachments
+    swrite(FLAG_HEAD_ATTACH)
     for bugid in opt.ids:
         attid = bz.attachfile(bugid, fileobj, desc, **kwargs)
-        print("Created attachment %i on bug %s" % (attid, bugid))
+        swrite("Created attachment %i on bug %s\n" % (attid, bugid))
+    swrite(FLAG_TAIL_ATTACH)
+    sflush()
+    fileobj.close()
 
 
 #################
