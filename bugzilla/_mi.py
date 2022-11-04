@@ -14,7 +14,6 @@
 # See the COPYING file in the top-level directory.
 
 import datetime
-import errno
 import getpass
 import json
 import logging
@@ -27,8 +26,6 @@ import urllib.parse
 import xmlrpc.client
 
 import requests.exceptions
-
-import bugzilla
 
 import bugzilla
 from ._cli import _is_unittest_debug
@@ -91,6 +88,7 @@ __GLOBAL_CACHE_ARG = None
 HANDLE_LOGIN_Y = 0
 HANDLE_LOGIN_N = 1
 
+class InterruptLoop(Exception): pass
 
 ################
 # Patch output #
@@ -122,6 +120,7 @@ def exit_patched(self, status=0, message=None):
         emsg = message + \
             "\nArgumentParser exit with status {}".format(status)
         self._print_message(emsg)
+    raise InterruptLoop
 
 class Bugzilla_patched(bugzilla.Bugzilla):
     """ Patch `bugzilla.Bugzilla` to fit MI
@@ -196,7 +195,7 @@ class Bugzilla_patched(bugzilla.Bugzilla):
 # Util helpers #
 ################
 
-def setup_logging(debug, verbose):
+def setup_logging():
     """ Patch for redirecting log into file
 
     Avoid interfering with the contents in 
@@ -208,6 +207,9 @@ def setup_logging(debug, verbose):
         datefmt="%y.%m.%d %H:%M:%S"))
     log.addHandler(handler)
 
+def level_logging(debug, verbose):
+    """ Change log level on the fly
+    """
     if debug:
         log.setLevel(logging.DEBUG)
     elif verbose:
@@ -492,120 +494,153 @@ def _handle_login(opt, action, bz):
     password = getattr(opt, "pos_password", None) or opt.password
     use_key = getattr(opt, "api_key", False)
 
-    try:
-        if use_key:
-            bz.interactive_save_api_key()
-        elif do_interactive_login:
-            swrite(FLAG_HEAD_ILOGIN)
-            if bz.api_key:
-                swrite("You already have an API key configured for %s" % bz.url)
-                swrite("There is no need to cache a login token. Exiting.")
-                swrite(FLAG_TAIL_ILOGIN)
-                sflush()
-                return HANDLE_LOGIN_Y
-            swrite("Logging into %s" % urllib.parse.urlparse(bz.url)[1])
+    if use_key:
+        bz.interactive_save_api_key()
+    elif do_interactive_login:
+        swrite(FLAG_HEAD_ILOGIN)
+        if bz.api_key:
+            swrite("You already have an API key configured for %s" % bz.url)
+            swrite("There is no need to cache a login token. Exiting.")
             swrite(FLAG_TAIL_ILOGIN)
             sflush()
-            bz.interactive_login(username, password,
-                    restrict_login=opt.restrict_login)
-    except bugzilla.BugzillaError as e:
-        swrite(FLAG_HEAD_EXCEPT)
-        swrite("Hit bugzilla.BugzillaError: %s" % str(e))
-        swrite(FLAG_TAIL_EXCEPT)
+            raise InterruptLoop(HANDLE_LOGIN_Y)
+        swrite("Logging into %s" % urllib.parse.urlparse(bz.url)[1])
+        swrite(FLAG_TAIL_ILOGIN)
         sflush()
-        return HANDLE_LOGIN_N
+        bz.interactive_login(username, password,
+                restrict_login=opt.restrict_login)
 
     if opt.ensure_logged_in and not bz.logged_in:
-        print("--ensure-logged-in passed but you aren't logged in to %s" %
-            bz.url)
-        return HANDLE_LOGIN_N
+        swrite(FLAG_HEAD_ILOGIN)
+        swrite("--ensure-logged-in passed but you aren't logged in to %s" % bz.url)
+        swrite(FLAG_TAIL_ILOGIN)
+        sflush()
+        raise InterruptLoop(HANDLE_LOGIN_N)
 
     if is_login_command:
-        return HANDLE_LOGIN_Y
+        raise InterruptLoop(HANDLE_LOGIN_Y)
 
 
 def _main(unittest_bz_instance):
+    """ (Patched version)
+    """
+    # init argparser & logger
+    setup_logging()
     parser = setup_parser()
-    opt = parser.parse_args()
-    action = opt.command
-    setup_logging(opt.debug, opt.verbose)
+    refresh = False
 
-    log.debug("Launched with command line: %s", " ".join(sys.argv))
-    log.debug("Bugzilla module: %s", bugzilla)
+    # main loop
+    while True:
+        swrite(FLAG_HEAD_ARGINF)
+        swrite("ArgumentParser waiting")
+        swrite(FLAG_TAIL_ARGINF)
+        sflush()
 
-    if unittest_bz_instance:
-        bz = unittest_bz_instance
-    else:
-        bz = _make_bz_instance(opt)
+        try:
+            NewCmd = sreadl().strip()
+            if (NewCmd == "__REFRESH__"):
+                refresh = True
+                continue
+            NewOpt = parser.parse_args(NewCmd.split())
+        except InterruptLoop:
+            continue
+        level_logging(NewOpt.debug, NewOpt.verbose)
+        log.debug("Launched with command line: %s", NewCmd)
+        log.debug("Bugzilla module: %s", bugzilla)
+        NewAct = NewOpt.command
 
-    # Handle login options
-    _handle_login(opt, action, bz)
-
-
-    ###########################
-    # Run the actual commands #
-    ###########################
-
-    if hasattr(opt, "outputformat"):
-        if not opt.outputformat and opt.output not in ['raw', 'json', None]:
-            opt.outputformat = _convert_to_outputformat(opt.output)
-
-    buglist = []
-    if action == 'info':
-        _do_info(bz, opt)
-
-    elif action == 'query':
-        buglist = _do_query(bz, opt, parser)
-
-    elif action == 'new':
-        buglist = _do_new(bz, opt, parser)
-
-    elif action == 'attach':
-        if opt.get or opt.getall:
-            if opt.ids:
-                parser.error("Bug IDs '%s' not used for "
-                    "getting attachments" % opt.ids)
-            _do_get_attach(bz, opt)
+        if unittest_bz_instance:
+            bz = unittest_bz_instance
         else:
-            _do_set_attach(bz, opt, parser)
+            bz = _make_bz_instance(NewOpt, force_new=refresh)
+            refresh = False
 
-    elif action == 'modify':
-        _do_modify(bz, parser, opt)
-    else:  # pragma: no cover
-        raise RuntimeError("Unexpected action '%s'" % action)
+        try:
+            # Handle login options
+            _handle_login(NewOpt, NewAct, bz)
+        except InterruptLoop:
+            continue
+        except Exception as E:
+            # not BaseException to jump KeyboardInterrupt
+            swrite(FLAG_HEAD_EXCEPT)
+            swrite("Hit %s:\n%s" %(E.__class__.__name__,str(E)))
+            swrite(FLAG_TAIL_EXCEPT)
+            sflush()
+            continue
 
-    # If we're doing new/query/modify, output our results
-    if action in ['new', 'query']:
-        _format_output(bz, opt, buglist)
+        if hasattr(NewOpt, "outputformat"):
+            if not NewOpt.outputformat and NewOpt.output not in ['raw', 'json', None]:
+                NewOpt.outputformat = _convert_to_outputformat(NewOpt.output)
+        buglist = []
+        try:
+            if NewAct == 'info':
+                _do_info(bz, NewOpt)
 
+            elif NewAct == 'query':
+                buglist = _do_query(bz, NewOpt, parser)
+
+            elif NewAct == 'new':
+                buglist = _do_new(bz, NewOpt, parser)
+
+            elif NewAct == 'attach':
+                if NewOpt.get or NewOpt.getall:
+                    if NewOpt.ids:
+                        parser.error("Bug IDs '%s' not used for "
+                            "getting attachments" % NewOpt.ids)
+                    _do_get_attach(bz, NewOpt)
+                else:
+                    _do_set_attach(bz, NewOpt, parser)
+
+            elif NewAct == 'modify':
+                _do_modify(bz, parser, NewOpt)
+            else:
+                continue
+
+            # If we're doing new/query/modify, output our results
+            if NewAct in ['new', 'query']:
+                _format_output(bz, NewOpt, buglist)
+        except InterruptLoop:
+            continue
+        except (xmlrpc.client.Fault, bugzilla.BugzillaError) as e:
+            swrite(FLAG_HEAD_EXCEPT)
+            swrite("Server error - %s: %s" %(e.__class__.__name__,str(e)))
+            swrite(FLAG_TAIL_EXCEPT)
+            refresh = True
+            continue
+        except requests.exceptions.SSLError as e:
+            # Give SSL recommendations
+            swrite(FLAG_HEAD_EXCEPT)
+            swrite("SSL error: %s" % e)
+            swrite("\nIf you trust the remote server, you can work "
+                   "around this error with `--nosslverify`")
+            swrite(FLAG_TAIL_EXCEPT)
+            refresh = True
+            continue
+        except (socket.error,
+                requests.exceptions.HTTPError,
+                requests.exceptions.ConnectionError,
+                requests.exceptions.InvalidURL,
+                xmlrpc.client.ProtocolError) as e:
+            swrite(FLAG_HEAD_EXCEPT)    
+            swrite("Connection lost/failed - %s: %s" %(e.__class__.__name__,str(e)))
+            swrite(FLAG_TAIL_EXCEPT)
+            refresh = True
+            continue
 
 def main(unittest_bz_instance=None):
+    """ (Patched version)
+    """
     try:
-        try:
-            return _main(unittest_bz_instance)
-        except (Exception, KeyboardInterrupt):
-            log.debug("", exc_info=True)
-            raise
+        _main(unittest_bz_instance)
     except KeyboardInterrupt:
-        print("\nExited at user request.")
-        sys.exit(1)
-    except (xmlrpc.client.Fault, bugzilla.BugzillaError) as e:
-        print("\nServer error: %s" % str(e))
-        sys.exit(3)
-    except requests.exceptions.SSLError as e:
-        # Give SSL recommendations
-        print("SSL error: %s" % e)
-        print("\nIf you trust the remote server, you can work "
-              "around this error with:\n"
-              "  bugzilla --nosslverify ...")
-        sys.exit(4)
-    except (socket.error,
-            requests.exceptions.HTTPError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.InvalidURL,
-            xmlrpc.client.ProtocolError) as e:
-        print("\nConnection lost/failed: %s" % str(e))
-        sys.exit(2)
+        swrite(FLAG_HEAD_STRING)
+        swrite("Exited at user request")
+        swrite(FLAG_HEAD_STRING)
+        sflush()
+        sys.exit(0)
+    except BaseException:
+        log.debug("", exc_info=True)
+        raise
 
 
 def mi():
