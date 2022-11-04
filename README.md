@@ -18,4 +18,6 @@ The purpose of introducing **MI** in *python-bugzilla-mi* is also to support usi
 
 `bugzilla-mi` is the entrance of *python-bugzilla-mi* in which you can talking to a [Bugzilla](https://www.bugzilla.org/) instance over XMLRPC or REST. Also original  features about performing actions from the command line is still available but with a different usage, such as create or edit bugs, various queries, etc.
 
+`bugzilla-cli` still provides exactly the same features as before (also same as the original CLI tool `/usr/bin/bugzilla`).
+
 Please browse things in `docs` for more details.
