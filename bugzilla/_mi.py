@@ -52,7 +52,8 @@ format_field_re = re.compile("%{([a-z0-9_]+)(?::([^}]*))?}")
 log = logging.getLogger(bugzilla.__name__)
 
 DEFAULT_BZ_LOG = os.getenv("__BUGZILLA_LOG_FILE") or os.path.join(
-    os.path.abspath(__file__), datetime.datetime.now().strftime("../BZMI%y%m%d%H%M%S.log"))
+    os.path.dirname(os.path.abspath(__file__)), 
+    datetime.datetime.now().strftime("../BZMI%y%m%d%H%M%S.log"))
 
 FHEAD_PRE = "\n|v>"
 FHEAD_SUF = "<v|\n"
@@ -527,7 +528,7 @@ def _main(unittest_bz_instance):
     # init argparser & logger
     setup_logging()
     parser = setup_parser()
-    refresh = False
+    bz_REFRESH = False
 
     # main loop
     while True:
@@ -539,7 +540,7 @@ def _main(unittest_bz_instance):
         try:
             NewCmd = sreadl().strip()
             if (NewCmd == "__REFRESH__"):
-                refresh = True
+                bz_REFRESH = True
                 continue
             NewOpt = parser.parse_args(NewCmd.split())
         except InterruptLoop:
@@ -552,8 +553,8 @@ def _main(unittest_bz_instance):
         if unittest_bz_instance:
             bz = unittest_bz_instance
         else:
-            bz = _make_bz_instance(NewOpt, force_new=refresh)
-            refresh = False
+            bz = _make_bz_instance(NewOpt, force_new=bz_REFRESH)
+            bz_REFRESH = False
 
         try:
             # Handle login options
@@ -605,7 +606,7 @@ def _main(unittest_bz_instance):
             swrite(FLAG_HEAD_EXCEPT)
             swrite("Server error - %s: %s" %(e.__class__.__name__,str(e)))
             swrite(FLAG_TAIL_EXCEPT)
-            refresh = True
+            bz_REFRESH = True
             continue
         except requests.exceptions.SSLError as e:
             # Give SSL recommendations
@@ -614,7 +615,7 @@ def _main(unittest_bz_instance):
             swrite("\nIf you trust the remote server, you can work "
                    "around this error with `--nosslverify`")
             swrite(FLAG_TAIL_EXCEPT)
-            refresh = True
+            bz_REFRESH = True
             continue
         except (socket.error,
                 requests.exceptions.HTTPError,
@@ -624,7 +625,7 @@ def _main(unittest_bz_instance):
             swrite(FLAG_HEAD_EXCEPT)    
             swrite("Connection lost/failed - %s: %s" %(e.__class__.__name__,str(e)))
             swrite(FLAG_TAIL_EXCEPT)
-            refresh = True
+            bz_REFRESH = True
             continue
 
 def main(unittest_bz_instance=None):
