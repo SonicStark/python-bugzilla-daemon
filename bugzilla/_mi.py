@@ -651,7 +651,7 @@ def main(unittest_bz_instance=None):
     except KeyboardInterrupt:
         swrite(FLAG_HEAD_STRING)
         swrite("Exited at user request")
-        swrite(FLAG_HEAD_STRING)
+        swrite(FLAG_TAIL_STRING)
         sflush()
         sys.exit(0)
     except BaseException:
