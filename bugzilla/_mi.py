@@ -13,6 +13,7 @@
 # This work is licensed under the GNU GPLv2 or later.
 # See the COPYING file in the top-level directory.
 
+import argparse
 import datetime
 import getpass
 import json
@@ -91,18 +92,18 @@ HANDLE_LOGIN_N = 1
 
 class InterruptLoop(Exception): pass
 
+
 ################
 # Patch output #
 ################
 
 def _print_message_patched(self, message, file=None):
-    """ A patch on an instance of `ArgumentParser`
+    """ A patch on `argparse.ArgumentParser`
 
-    Prepare for Monkey Patch on an instance of
+    Prepare for Monkey Patch on built-in 
     `argparse.ArgumentParser` to fit MI.
     Later we would use this like
-    `parser._print_message = types.MethodType(_print_message_patched, parser)`  or  
-    `parser._print_message = _print_message_patched.__get__(parser, argparse.ArgumentParser)`
+    `argparse.ArgumentParser._print_message = _print_message_patched`
     """
     if message:
         swrite(FLAG_HEAD_ARGINF)
@@ -111,9 +112,9 @@ def _print_message_patched(self, message, file=None):
         sflush()
 
 def exit_patched(self, status=0, message=None):
-    """ A patch on an instance of `ArgumentParser`
+    """ A patch on `argparse.ArgumentParser`
 
-    Prepare for Monkey Patch on an instance of
+    Prepare for Monkey Patch on built-in 
     `argparse.ArgumentParser` to fit MI.
     Later we would use just like `_print_message_patched` 
     """
@@ -231,9 +232,9 @@ def setup_parser():
 
     Redirect argparse output to stdout with our syntax
     """
+    argparse.ArgumentParser._print_message = _print_message_patched #Monkey Patch
+    argparse.ArgumentParser.exit           = exit_patched           #Monkey Patch
     rootparser = _setup_root_parser()
-    rootparser._print_message = types.MethodType(_print_message_patched, rootparser)#Monkey Patch
-    rootparser.exit           = types.MethodType(exit_patched          , rootparser)#Monkey Patch
     subparsers = rootparser.add_subparsers(dest="command")
     subparsers.required = True
     _setup_action_new_parser(subparsers)
