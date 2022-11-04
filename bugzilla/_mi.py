@@ -47,6 +47,7 @@ from ._cli import _convert_to_outputformat
 from ._cli import _xmlrpc_converter
 from ._cli import _bug_field_repl_cb
 
+
 DEFAULT_BZ = 'https://bugzilla.redhat.com'
 
 format_field_re = re.compile("%{([a-z0-9_]+)(?::([^}]*))?}")
@@ -86,6 +87,10 @@ sreadl = sys.stdin.readline
 
 __GLOBAL_CACHE_BZI = None
 __GLOBAL_CACHE_ARG = None
+
+HANDLE_LOGIN_Y = 0
+HANDLE_LOGIN_N = 1
+
 
 ################
 # Patch output #
@@ -475,8 +480,9 @@ def _make_bz_instance(opt, force_new=False):
 
 
 def _handle_login(opt, action, bz):
-    """
+    """ (Patched version)
     Handle all login related bits
+    but without interrupting MI
     """
     is_login_command = (action == 'login')
 
@@ -490,24 +496,32 @@ def _handle_login(opt, action, bz):
         if use_key:
             bz.interactive_save_api_key()
         elif do_interactive_login:
+            swrite(FLAG_HEAD_ILOGIN)
             if bz.api_key:
-                print("You already have an API key configured for %s" % bz.url)
-                print("There is no need to cache a login token. Exiting.")
-                sys.exit(0)
-            print("Logging into %s" % urllib.parse.urlparse(bz.url)[1])
+                swrite("You already have an API key configured for %s" % bz.url)
+                swrite("There is no need to cache a login token. Exiting.")
+                swrite(FLAG_TAIL_ILOGIN)
+                sflush()
+                return HANDLE_LOGIN_Y
+            swrite("Logging into %s" % urllib.parse.urlparse(bz.url)[1])
+            swrite(FLAG_TAIL_ILOGIN)
+            sflush()
             bz.interactive_login(username, password,
                     restrict_login=opt.restrict_login)
     except bugzilla.BugzillaError as e:
-        print(str(e))
-        sys.exit(1)
+        swrite(FLAG_HEAD_EXCEPT)
+        swrite("Hit bugzilla.BugzillaError: %s" % str(e))
+        swrite(FLAG_TAIL_EXCEPT)
+        sflush()
+        return HANDLE_LOGIN_N
 
     if opt.ensure_logged_in and not bz.logged_in:
         print("--ensure-logged-in passed but you aren't logged in to %s" %
             bz.url)
-        sys.exit(1)
+        return HANDLE_LOGIN_N
 
     if is_login_command:
-        sys.exit(0)
+        return HANDLE_LOGIN_Y
 
 
 def _main(unittest_bz_instance):
