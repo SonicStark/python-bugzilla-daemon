@@ -50,4 +50,17 @@ man ./bugzilla.1
 
 
 
-## New
+## New things
+
+### `guide.md`
+
+It introduces how our **MI** is built based on the previous **CLI** and its application scenarios. If you are familiar with [python-bugzilla
+/python-bugzilla
+](https://github.com/python-bugzilla/python-bugzilla), reading it will enable you to quickly understand and use this project.
+
+### `assets`: demos & charts
+
+| Item | Description |
+|------|-------------|
+| workflow.drawio     | It is drawn with [jgraph/drawio](https://github.com/jgraph/drawio) and shows how we maintain this project. |
+| workflow.drawio.png | Rendered from `workflow.drawio` for using in `python-bugzilla-mi/README.md`. |
