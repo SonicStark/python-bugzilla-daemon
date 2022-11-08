@@ -191,7 +191,7 @@ Referred only in `tests.__init__` as `os.environ["__BUGZILLA_UNITTEST"] = "1"`. 
 
 ## 2.4 Exit *MI*
 
-It is recommand that do `CTRL`+`C` or equivalent operation. The try-except mechanism in `MI` would catch `KeyboardInterrupt` and print
+It is recommand that do <kbd>Ctrl</kbd>+<kbd>C</kbd> or equivalent operation. The try-except mechanism in `MI` would catch `KeyboardInterrupt` and print
 ```text
 |v>STRING<v|
 Exited at user request
@@ -218,3 +218,18 @@ rather than
 If you do not specify explicitly, it may cause unpredictable exceptions to be raised or unexpected operations to be performed, although an automatic probe is supported.
 
 ## 3.2. Force creation of new connection instance
+
+When you are at
+```text
+|v>ARGINF<v|
+ArgumentParser waiting
+|^>ARGINF<^|
+
+```
+there is a special instruction
+```text
+__REFRESH__
+```
+When you write it to `stdin` and then write a *line break* (or press *Enter*) to launch, the internal instance of `bugzilla.Bugzilla` will be forced to be created in the next round, instead of try reading from cache first. (See also: `bugzilla._mi._make_bz_instance`)
+
+This may be useful in some special situations, such as force discarding previously corrupted stuff or a bad socket.
