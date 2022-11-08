@@ -156,16 +156,65 @@ The so called *flag-line* always appear in pair, with one indicating the start o
 
 ### 2.3.1. `PYTHONBUGZILLA_LOG_FILE`
 
+Specify the path of log file. If this environment variable is not set, the log file will be stored in parent directory of the directory in which `_mi.py` locates. And the file name will be equal to `datetime.datetime.now().strftime("BZMI%y%m%d%H%M%S.log")`.
+
+If you specify, please ensure that the path can be handled normally by built-in function `open` (e.g. make sure dir exists), otherwise an exception will be raised and *MI* will exit immediately.
+
+This environment variable is only read during the log setting process before *MI* enters its main loop. Changing it during running will not take effect before the next run of *MI*.
+
 ### 2.3.2. `PYTHONBUGZILLA_REQUESTS_TIMEOUT`
 
-### 2.3.3. `__BUGZILLA_UNITTEST`
+Used in `_session._BugzillaSession._get_timeout` and `_session._BugzillaSession.request`. Actually the timeout value will be passed to an instance of `requests.Session`. It works for both *XMLRPC* and *REST* because [requests](https://requests.readthedocs.io/en/latest/) is used as a unified backend.
 
-### 2.3.4. `__BUGZILLA_UNITTEST_DEBUG`
+See also (definition of `_session._BugzillaSession._get_timeout`):
+```python
+def _get_timeout(self):
+    # Default to 5 minutes. This is longer than bugzilla.redhat.com's
+    # apparent 3 minute timeout so shouldn't affect legitimate usage,
+    # but saves us from indefinite hangs
+    DEFAULT_TIMEOUT = 300
+    envtimeout = os.environ.get("PYTHONBUGZILLA_REQUESTS_TIMEOUT")
+    return float(envtimeout or DEFAULT_TIMEOUT)
+```
+
+### 2.3.3. `__BUGZILLA_UNITTEST_DEBUG`
+
+It may be changed by `tests.conftest.pytest_configure`, but only affects the return value of `bugzilla._cli._is_unittest_debug`. It seems that the only function it has is to ensure that global log output level is `DEBUG`.
+
+:warning: As the author of this guide I cannot accurately determine its use at present, please use with care if you need.
+
+### 2.3.4. `__BUGZILLA_UNITTEST`
+
+Referred only in `tests.__init__` as `os.environ["__BUGZILLA_UNITTEST"] = "1"`. It is suspected that this is a bug, the statement is more likely to be `os.environ["__BUGZILLA_UNITTEST_DEBUG"] = "1"`.
+
+:warning: As the author of this guide I cannot accurately determine its use at present, please use with care if you need.
 
 ## 2.4 Exit *MI*
+
+It is recommand that do `CTRL`+`C` or equivalent operation. The try-except mechanism in `MI` would catch `KeyboardInterrupt` and print
+```text
+|v>STRING<v|
+Exited at user request
+|^>STRING<^|
+```
+to `stdout` before exit.
 
 # 3. Tips
 
 ## 3.1. Explicitly specify *XMLRPC* or *REST*
+
+For example, it is better to use
+```text
+--bugzilla https://bugzilla.mozilla.org/xmlrpc.cgi 
+```
+or
+```text
+--bugzilla https://bugzilla.mozilla.org/rest 
+```
+rather than
+```text
+--bugzilla https://bugzilla.mozilla.org
+```
+If you do not specify explicitly, it may cause unpredictable exceptions to be raised or unexpected operations to be performed, although an automatic probe is supported.
 
 ## 3.2. Force creation of new connection instance
