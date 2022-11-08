@@ -46,3 +46,115 @@ Limited by our time and resources, these less important content has been removed
 
 
 # 2. Usage
+
+Before we start, it is assumed that you have fully understood the original [python-bugzilla](https://github.com/python-bugzilla/python-bugzilla). Since *MI* can be regarded as a wrapper of the original *CLI*, we will not repeat the contents that can be consulted in `bugzilla.1` or `bugzilla.rst`.
+
+## 2.1. Run *MI*
+
+### 2.1.1. Details
+
+First of all, get into the root directory of this project and then run this in your terminal:
+
+```shell
+./bugzilla-mi
+```
+
+If there is no accident, you will see the prompt message from `stdout`
+```text
+|v>ARGINF<v|
+ArgumentParser waiting
+|^>ARGINF<^|
+```
+which indicates that *MI* has started running. 
+
+Then you need to write these parameters of a call for original `bugzilla-cli` to current `stdin`. At the end, write a *line break* (which equals, the effect when you press *Enter*). And then wait for the new output from `stdout`.
+
+Next, you may need to write other information to current `stdin` according to the prompt message, such as user name and password. 
+
+Finally, you will always *(of course, when there is no accident)* get the output of this round from `stdout`.
+
+### 2.1.2. An example
+
+Assuming that you run the original `bugzilla-cli` as
+```shell
+./bugzilla-cli --bugzilla https://bugzilla.mozilla.org/rest info --products
+```
+
+Then you should see this stuff on your screen
+```text
+AUS Graveyard
+Add-on SDK Graveyard
+Air Mozilla
+...
+support.mozillamessaging.com Graveyard
+www.mozilla.org
+www.mozilla.org Graveyard
+```
+
+Now you run `./bugzilla-mi` and then should get
+```text
+|v>ARGINF<v|
+ArgumentParser waiting
+|^>ARGINF<^|
+
+```
+Type
+```text
+--bugzilla https://bugzilla.mozilla.org/rest info --products
+```
+in current line and press *Enter*, you should get this stuff:
+```text
+|v>STRING<v|
+AUS Graveyard
+Add-on SDK Graveyard
+Air Mozilla
+...
+support.mozillamessaging.com Graveyard
+www.mozilla.org
+www.mozilla.org Graveyard
+
+|^>STRING<^|
+
+|v>ARGINF<v|
+ArgumentParser waiting
+|^>ARGINF<^|
+
+```
+Now you are in another round waiting for input.
+
+## 2.2. Understand syntax in `stdout`
+
+### 2.2.1. *Expected* :vs: *Unexpected*
+
+**Expected** output in `stdout`, whether single line or multiple lines, is wrapped by *start-flag-line* and *end-flag-line*. Using a *State Machine* like can make it easy to parse these things.
+
+The front and back of the two lines are forced to add *line break* for each, which ensure that they form separate lines and are easily captured. For example, you can use the following Python style regex to match:
+```python
+r"\|v>[A-Z]{6}<v\|" #start-flag-line
+r"\|\^>[A-Z]{6}<\^\|" #end-flag-line
+```
+
+**Unexpected** output in `stdout` is also easy to parse, because these things are not wrapped by any preset flags. They are usually caused by exceptions which can not be handled and cause current process to exit abnormally.
+
+* `|v>ARGINF<v|` & `|^>ARGINF<^|`
+* `|v>EXCEPT<v|` & `|^>EXCEPT<^|`
+* `|v>STRING<v|` & `|^>STRING<^|`
+* `|v>FORMAT<v|` & `|^>FORMAT<^|`
+* `|v>ATTACH<v|` & `|^>ATTACH<^|`
+* `|v>ILOGIN<v|` & `|^>ILOGIN<^|`
+
+## 2.3. Environment variables
+
+### 2.3.1. `PYTHONBUGZILLA_LOG_FILE`
+
+### 2.3.2. `PYTHONBUGZILLA_REQUESTS_TIMEOUT`
+
+### 2.3.3. `__BUGZILLA_UNITTEST`
+
+### 2.3.4. `__BUGZILLA_UNITTEST_DEBUG`
+
+# 3. Tips
+
+## 3.1. Explicitly specify *XMLRPC* or *REST*
+
+## 3.2. Force creation of new connection instance
