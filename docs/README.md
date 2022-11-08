@@ -58,6 +58,10 @@ It introduces how our **MI** is built based on the previous **CLI** and its appl
 /python-bugzilla
 ](https://github.com/python-bugzilla/python-bugzilla), reading it will enable you to quickly understand and use this project.
 
+### `tests.md`
+
+Describe these things about running the unit test.
+
 ### `assets`: demos & charts
 
 | Item | Description |
