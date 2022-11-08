@@ -136,12 +136,21 @@ r"\|\^>[A-Z]{6}<\^\|" #end-flag-line
 
 **Unexpected** output in `stdout` is also easy to parse, because these things are not wrapped by any preset flags. They are usually caused by exceptions which can not be handled and cause current process to exit abnormally.
 
-* `|v>ARGINF<v|` & `|^>ARGINF<^|`
-* `|v>EXCEPT<v|` & `|^>EXCEPT<^|`
-* `|v>STRING<v|` & `|^>STRING<^|`
-* `|v>FORMAT<v|` & `|^>FORMAT<^|`
-* `|v>ATTACH<v|` & `|^>ATTACH<^|`
-* `|v>ILOGIN<v|` & `|^>ILOGIN<^|`
+### 2.2.2. Meaning of each flag-line
+
+The so called *flag-line* always appear in pair, with one indicating the start of messages and the other indicating the end. Different words wrapped by `>` and `<` indicate different message types.
+
+* `|v>ARGINF<v|`&`|^>ARGINF<^|`&emsp;Messages come from the patched `argparse.ArgumentParser`. This patched stuff would never call `sys.exit` when it fails in parsing. Usually the messages are used to inform you the parser is waiting for input or whether the parameters it read from `stdin` are legal.
+
+* `|v>EXCEPT<v|`&`|^>EXCEPT<^|`&emsp;It indicates that an exception has been caught and properly handled. Exceptions within the expected range could be various. Such as a socket error occurs (e.g. TCP connection timeout), or the Bugzilla server throws an error. These exceptions are not fatal, and indicate that this round is not successful, and it is best to directly jump into a new round.
+
+* `|v>FORMAT<v|`&`|^>FORMAT<^|`&emsp;Output stuff when using `--outputformat` option.
+
+* `|v>ATTACH<v|`&`|^>ATTACH<^|`&emsp;Output stuff from performing `attach` command.
+
+* `|v>ILOGIN<v|`&`|^>ILOGIN<^|`&emsp;Stuff about login or API key. In some situations, terminals will block in the next line of its *end-flag-line*, waiting for the user name, password, or API key to be written into `stdin`. For the interactive behavior about login, it is recommanded to check the methods with names beginning with `interactive_` in `base.py`.
+
+* `|v>STRING<v|`&`|^>STRING<^|`&emsp;Other general output stuff.
 
 ## 2.3. Environment variables
 
@@ -152,6 +161,8 @@ r"\|\^>[A-Z]{6}<\^\|" #end-flag-line
 ### 2.3.3. `__BUGZILLA_UNITTEST`
 
 ### 2.3.4. `__BUGZILLA_UNITTEST_DEBUG`
+
+## 2.4 Exit *MI*
 
 # 3. Tips
 
