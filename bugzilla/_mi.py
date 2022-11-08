@@ -205,6 +205,13 @@ def setup_logging():
     Avoid interfering with the contents in 
     `stderr` and `stdout` as much as possible
     """
+    try:
+        __F = open(DEFAULT_BZ_LOG, mode="ab")
+    except Exception as __E:
+        raise RuntimeError("CANNOT create instance of logging.FileHandler "
+                        "with {}".format(repr(DEFAULT_BZ_LOG))) from __E
+    else:
+        __F.close()
     handler = logging.FileHandler(DEFAULT_BZ_LOG, mode="a", encoding="utf-8", delay=False)
     handler.setFormatter(logging.Formatter(
         "%(asctime)s,%(msecs)d %(filename)s:%(lineno)d %(levelname)s: %(message)s",
