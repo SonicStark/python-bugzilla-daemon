@@ -52,7 +52,7 @@ format_field_re = re.compile("%{([a-z0-9_]+)(?::([^}]*))?}")
 
 log = logging.getLogger(bugzilla.__name__)
 
-DEFAULT_BZ_LOG = os.getenv("__BUGZILLA_LOG_FILE") or os.path.join(
+DEFAULT_BZ_LOG = os.getenv("PYTHONBUGZILLA_LOG_FILE") or os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 
     datetime.datetime.now().strftime("../BZMI%y%m%d%H%M%S.log"))
 
