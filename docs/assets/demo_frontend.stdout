@@ -1,0 +1,189 @@
+Catch being wait mozilla ----->ArgumentParser waiting<-----Catch argparse error ----->bugzilla-mi: error: argument command: invalid choice: 'very' (choose from 'new', 'query', 'info', 'modify', 'attach', 'login')
+ArgumentParser exit with status 2<-----Catch output products ----->AUS Graveyard
+Add-on SDK Graveyard
+Air Mozilla
+Air Mozilla Graveyard
+Android Background Services Graveyard
+B2GDroid Graveyard
+Boot2Gecko Graveyard
+Bugzilla
+CA Program
+CCK Graveyard
+Calendar
+Camino Graveyard
+Chat Core
+Cloud Services
+Cloud Services Graveyard
+Community Building
+Composer Graveyard
+Conduit
+Connected Devices Graveyard
+Content Services Graveyard
+Context Graph Graveyard
+Core
+Core Graveyard
+Data & BI Services Team
+Data & BI Services Team Graveyard
+Data Compliance
+Data Platform and Tools
+Data Platform and Tools Graveyard
+Data Science
+Datazilla Graveyard
+Derivatives Graveyard
+DevTools
+DevTools Graveyard
+Developer Documentation Graveyard
+Developer Ecosystem
+Developer Engagement
+Developer Engagement Graveyard
+Developer Infrastructure
+Developer Services
+Directory
+Documentation Graveyard
+Emerging Markets Graveyard
+Enterprise Information Security Graveyard
+Extend Firefox Graveyard
+External Software Affecting Firefox
+External Software Affecting Firefox Graveyard
+FSA Graveyard
+Fenix
+Fenix Graveyard
+Firefox
+Firefox Affiliates Graveyard
+Firefox Build System
+Firefox Friends
+Firefox Graveyard
+Firefox Health Report
+Firefox Health Report Graveyard
+Firefox OS Graveyard
+Firefox Private Network
+Firefox for Android Graveyard
+Firefox for Echo Show Graveyard
+Firefox for FireTV Graveyard
+Firefox for Metro Graveyard
+Firefox for iOS
+Focus
+Focus-iOS
+GeckoView
+Grendel Graveyard
+Hello (Loop)
+Infrastructure & Operations
+Infrastructure & Operations Graveyard
+Input
+Input Graveyard
+Instantbird
+Instantbird Servers
+Intellego Graveyard
+Internet Public Policy
+Invalid Bugs
+JSS Graveyard
+L20n
+L20n Graveyard
+Legal Graveyard
+Localization Infrastructure and Tools
+Localization Infrastructure and Tools Graveyard
+Location
+Lockwise Graveyard
+MailNews Core
+MailNews Core Graveyard
+Marketing
+Marketing Graveyard
+Marketplace Graveyard
+Minimo Graveyard
+MozReview Graveyard
+Mozilla China
+Mozilla Foundation
+Mozilla Foundation Communications
+Mozilla Foundation Operations
+Mozilla Grants
+Mozilla Labs
+Mozilla Labs Graveyard
+Mozilla Localizations
+Mozilla Localizations Graveyard
+Mozilla Messaging
+Mozilla Metrics
+Mozilla QA
+Mozilla QA Graveyard
+Mozilla Reps
+Mozilla Reps Graveyard
+Mozilla VPN
+MozillaClassic Graveyard
+NSPR
+NSS
+Other Applications
+Other Applications Graveyard
+Pancake Graveyard
+Participation Infrastructure
+Participation Infrastructure Graveyard
+Penelope Graveyard
+Petri Graveyard
+Plugin Check
+Plugins Graveyard
+Pocket
+Powertool Graveyard
+Privacy Graveyard
+Product Innovation
+Recruiting
+Release Engineering
+Release Engineering Graveyard
+Remote Protocol
+Rhino Graveyard
+SeaMonkey
+Security Assurance
+Servo Graveyard
+Shield
+Skywriter Graveyard
+Snippets
+Snippets Graveyard
+Socorro
+Socorro Graveyard
+Tamarin Graveyard
+Taskcluster
+Taskcluster Graveyard
+Tech Evangelism Graveyard
+Tecken
+Testing
+Testing Graveyard
+Testopia
+Thunderbird
+Toolkit
+Toolkit Graveyard
+Tracking
+Tracking Graveyard
+Tree Management
+Tree Management Graveyard
+UX Systems
+Untriaged Bugs
+User Experience Design
+User Research
+Web Apps
+Web Apps Graveyard
+Web Compatibility
+WebExtensions
+Webmaker Graveyard
+Websites
+Websites Graveyard
+Webtools
+Webtools Graveyard
+addons.mozilla.org
+addons.mozilla.org Graveyard
+bugzilla.mozilla.org
+bugzilla.mozilla.org Graveyard
+developer.mozilla.org
+developer.mozilla.org Graveyard
+mozilla.org
+mozilla.org Graveyard
+mozillaignite Graveyard
+quality.mozilla.org
+support.mozilla.org
+support.mozilla.org - Lithium
+support.mozilla.org Graveyard
+support.mozillamessaging.com Graveyard
+www.mozilla.org
+www.mozilla.org Graveyard<-----Catch being wait again ----->ArgumentParser waiting<-----Catch json output query 255606 ----->{"bugs": [{"alias": null, "assigned_to": "LpSolit@gmail.com", "assigned_to_detail": {"email": "LpSolit@gmail.com", "id": 120380, "name": "LpSolit@gmail.com", "nick": "LpSolit", "real_name": "Fr\u00e9d\u00e9ric Buclin"}, "blocks": [401005], "cc": ["dkl@mozilla.com", "emorley@mozilla.com", "glob@mozilla.com", "justdave@bugzilla.org", "LpSolit@gmail.com", "mikedoak@gmail.com", "mkanat@bugzilla.org", "reed@reedloden.com"], "cc_detail": [{"email": "dkl@mozilla.com", "id": 5898, "name": "dkl@mozilla.com", "nick": "dkl", "real_name": "David Lawrence [:dkl]"}, {"email": "emorley@mozilla.com", "id": 373476, "name": "emorley@mozilla.com", "nick": "emorley", "real_name": "Ed Morley [:emorley]"}, {"email": "glob@mozilla.com", "id": 13647, "name": "glob@mozilla.com", "nick": "glob", "real_name": ":glob \u2731"}, {"email": "justdave@bugzilla.org", "id": 10297, "name": "justdave@bugzilla.org", "nick": "justdave", "real_name": "Dave Miller [:justdave]"}, {"email": "LpSolit@gmail.com", "id": 120380, "name": "LpSolit@gmail.com", "nick": "LpSolit", "real_name": "Fr\u00e9d\u00e9ric Buclin"}, {"email": "mikedoak@gmail.com", "id": 328459, "name": "mikedoak@gmail.com", "nick": "mikedoak", "real_name": "mikedoak"}, {"email": "mkanat@bugzilla.org", "id": 73187, "name": "mkanat@bugzilla.org", "nick": "mkanat", "real_name": "Max Kanat-Alexander"}, {"email": "reed@reedloden.com", "id": 159758, "name": "reed@reedloden.com", "nick": "reed", "real_name": "Reed Loden [:reed]"}], "cf_cab_review": "---", "cf_fx_iteration": "---", "cf_fx_points": "---", "cf_last_resolved": "2011-11-26T00:14:04Z", "cf_qa_whiteboard": "", "cf_user_story": "", "classification": "Server Software", "comment_count": 37, "component": "Query/Bug List", "creation_time": "2004-08-14T13:33:28Z", "creator": "buti@gmx.at", "creator_detail": {"email": "buti@gmx.at", "id": 151736, "name": "buti@gmx.at", "nick": "buti", "real_name": "till busch"}, "depends_on": [408112], "dupe_of": null, "duplicates": [666279], "flags": [{"creation_date": "2011-11-23T22:47:55Z", "id": 479381, "modification_date": "2011-11-23T22:47:55Z", "name": "approval", "setter": "mkanat@bugzilla.org", "status": "+", "type_id": 38}, {"creation_date": "2011-11-23T22:47:55Z", "id": 479382, "modification_date": "2011-11-23T22:47:55Z", "name": "approval4.2", "setter": "mkanat@bugzilla.org", "status": "+", "type_id": 731}, {"creation_date": "2011-06-22T20:57:17Z", "id": 451511, "modification_date": "2011-06-22T20:57:17Z", "name": "blocking4.2", "setter": "mkanat@bugzilla.org", "status": "+", "type_id": 726}], "groups": [], "id": 255606, "is_cc_accessible": true, "is_confirmed": true, "is_creator_accessible": true, "is_open": false, "keywords": [], "last_change_time": "2012-02-29T17:43:47Z", "mentors": [], "mentors_detail": [], "op_sys": "All", "platform": "All", "priority": "--", "product": "Bugzilla", "qa_contact": "default-qa@bugzilla.bugs", "qa_contact_detail": {"email": "default-qa@bugzilla.bugs", "id": 5086, "name": "default-qa@bugzilla.bugs", "nick": "default-qa", "real_name": ""}, "regressed_by": [], "regressions": [], "resolution": "FIXED", "see_also": [], "severity": "normal", "status": "RESOLVED", "summary": "It is possible to get all bugs from buglist.cgi by passing URL parameters to buglist.cgi that create no Search.pm criteria", "target_milestone": "Bugzilla 4.2", "type": "defect", "url": "", "version": "unspecified", "votes": 0, "whiteboard": "[wanted-bmo]"}]}<-----Catch being wait libreoffce ----->ArgumentParser waiting<-----Catch output bugzilla with `--products` ----->Document Liberation Project
+Impress Remote
+LibreOffice
+LibreOffice Online
+QA Tools
+cppunit
+libexttextcat<-----Catch being wait again ----->ArgumentParser waiting<-----Catch json output with `--from-url` ----->{"bugs": [{"alias": [], "assigned_to": "libreoffice-bugs@lists.freedesktop.org", "assigned_to_detail": {"email": "libreoffice-bugs@lists.freedesktop.org", "id": 18670, "name": "libreoffice-bugs@lists.freedesktop.org", "real_name": "Not Assigned"}, "blocks": [], "cc": ["chris.sherlock79@gmail.com", "xiscofauli@libreoffice.org"], "cc_detail": [{"email": "chris.sherlock79@gmail.com", "id": 37523, "name": "chris.sherlock79@gmail.com", "real_name": "Chris Sherlock"}, {"email": "xiscofauli@libreoffice.org", "id": 23210, "name": "xiscofauli@libreoffice.org", "real_name": "Xisco Faul\u00ed"}], "cf_crashreport": "", "cf_regressionby": "", "classification": "Unclassified", "component": "LibreOffice", "creation_time": "2017-05-26T12:16:44Z", "creator": "chris.sherlock79@gmail.com", "creator_detail": {"email": "chris.sherlock79@gmail.com", "id": 37523, "name": "chris.sherlock79@gmail.com", "real_name": "Chris Sherlock"}, "deadline": null, "depends_on": [], "dupe_of": null, "flags": [], "groups": [], "id": 108115, "is_cc_accessible": true, "is_confirmed": true, "is_creator_accessible": true, "is_open": true, "keywords": [], "last_change_time": "2022-10-14T03:32:58Z", "op_sys": "All", "platform": "All", "priority": "medium", "product": "LibreOffice", "qa_contact": "", "resolution": "", "see_also": [], "severity": "normal", "status": "NEW", "summary": "Merging registry modules can overflow", "target_milestone": "---", "url": "", "version": "Inherited From OOo", "whiteboard": ""}, {"alias": ["Toolbars-Overflow"], "assigned_to": "libreoffice-bugs@lists.freedesktop.org", "assigned_to_detail": {"email": "libreoffice-bugs@lists.freedesktop.org", "id": 18670, "name": "libreoffice-bugs@lists.freedesktop.org", "real_name": "Not Assigned"}, "blocks": [103239], "cc": ["cno@nouenoff.nl", "thomas.lendo@gmail.com", "vsfoote@libreoffice.org"], "cc_detail": [{"email": "cno@nouenoff.nl", "id": 19253, "name": "cno@nouenoff.nl", "real_name": "Cor Nouws"}, {"email": "thomas.lendo@gmail.com", "id": 44231, "name": "thomas.lendo@gmail.com", "real_name": "Thomas Lendo"}, {"email": "vsfoote@libreoffice.org", "id": 25963, "name": "vsfoote@libreoffice.org", "real_name": "V Stuart Foote"}], "cf_crashreport": "", "cf_regressionby": "", "classification": "Unclassified", "component": "LibreOffice", "creation_time": "2017-10-07T11:20:13Z", "creator": "philipz85@hotmail.com", "creator_detail": {"email": "philipz85@hotmail.com", "id": 46342, "name": "philipz85@hotmail.com", "real_name": "Yousuf Philips (jay) (retired)"}, "deadline": null, "depends_on": [79657, 122003, 139117, 150380, 42029, 79368, 79444, 89719, 133350], "dupe_of": null, "flags": [], "groups": [], "id": 112974, "is_cc_accessible": true, "is_confirmed": true, "is_creator_accessible": true, "is_open": true, "keywords": [], "last_change_time": "2022-08-25T11:47:35Z", "op_sys": "All", "platform": "All", "priority": "medium", "product": "LibreOffice", "qa_contact": "", "resolution": "", "see_also": [], "severity": "normal", "status": "NEW", "summary": "[META] Toolbar overflow/wrap/chevron button bugs and enhancements", "target_milestone": "---", "url": "", "version": "unspecified", "whiteboard": ""}]}<-----

@@ -1,0 +1,25 @@
+22.11.09 14:22:57,243 _mi.py:570 DEBUG: Launched with command line: --bugzilla https://bugzilla.mozilla.org/rest --debug query --json --bug_id 255606
+22.11.09 14:22:57,243 _mi.py:571 DEBUG: Bugzilla module: <module 'bugzilla' from '/home/user/project/python-bugzilla-mi/bugzilla/__init__.py'>
+22.11.09 14:22:57,243 _backendrest.py:49 DEBUG: Bugzilla REST GET https://bugzilla.mozilla.org/rest/bug params={'id': ['255606'], 'include_fields': ['id']}
+22.11.09 14:22:57,691 base.py:1320 DEBUG: bug_search returned:
+{'bugs': [{'id': 255606}]}
+22.11.09 14:22:57,691 base.py:1332 DEBUG: Query returned 1 bugs
+22.11.09 14:22:57,691 _backendrest.py:49 DEBUG: Bugzilla REST GET https://bugzilla.mozilla.org/rest/bug params={'permissive': 1, 'id': [255606], 'alias': []}
+22.11.09 14:22:58,873 _mi.py:570 DEBUG: Launched with command line: --bugzilla https://bugs.documentfoundation.org/rest --debug info --products
+22.11.09 14:22:58,873 _mi.py:571 DEBUG: Bugzilla module: <module 'bugzilla' from '/home/user/project/python-bugzilla-mi/bugzilla/__init__.py'>
+22.11.09 14:22:58,874 _authfiles.py:174 DEBUG: Using tokenfile=/home/lzw/.cache/python-bugzilla/bugzillatoken
+22.11.09 14:22:58,874 base.py:502 DEBUG: Connecting with URL https://bugs.documentfoundation.org/rest
+22.11.09 14:22:58,874 _authfiles.py:82 DEBUG: bugzillarc: Searching for config section matching https://bugs.documentfoundation.org/rest
+22.11.09 14:22:58,874 _authfiles.py:98 DEBUG: bugzillarc: No section found
+22.11.09 14:22:58,874 _backendrest.py:49 DEBUG: Bugzilla REST GET https://bugs.documentfoundation.org/rest/version params=None
+22.11.09 14:23:02,658 base.py:527 DEBUG: Bugzilla version string: 5.0.6
+22.11.09 14:23:02,659 _backendrest.py:49 DEBUG: Bugzilla REST GET https://bugs.documentfoundation.org/rest/product_accessible params=None
+22.11.09 14:23:04,470 base.py:792 DEBUG: For ptype=accessible found ids=[154, 146, 109, 161, 158, 156, 155]
+22.11.09 14:23:04,470 _backendrest.py:49 DEBUG: Bugzilla REST GET https://bugs.documentfoundation.org/rest/product/get params={'ids': [154, 146, 109, 161, 158, 156, 155], 'include_fields': ['name', 'id']}
+22.11.09 14:23:06,361 _mi.py:570 DEBUG: Launched with command line: --bugzilla https://bugs.documentfoundation.org/rest --debug query --json --from-url 'buglist.cgi?chfield=rep_platform&chfieldto=Now&component=LibreOffice&product=LibreOffice&query_format=advanced&resolution=---&short_desc=overflow&short_desc_type=allwordssubstr'
+22.11.09 14:23:06,361 _mi.py:571 DEBUG: Bugzilla module: <module 'bugzilla' from '/home/user/project/python-bugzilla-mi/bugzilla/__init__.py'>
+22.11.09 14:23:06,362 _backendrest.py:49 DEBUG: Bugzilla REST GET https://bugs.documentfoundation.org/rest/bug params={'include_fields': ['id'], 'chfield': 'rep_platform', 'chfieldto': 'Now', 'component': 'LibreOffice', 'product': 'LibreOffice', 'query_format': 'advanced', 'resolution': '---', 'short_desc': 'overflow', 'short_desc_type': 'allwordssubstr'}
+22.11.09 14:23:08,455 base.py:1320 DEBUG: bug_search returned:
+{'bugs': [{'id': 108115}, {'id': 112974}]}
+22.11.09 14:23:08,455 base.py:1332 DEBUG: Query returned 2 bugs
+22.11.09 14:23:08,456 _backendrest.py:49 DEBUG: Bugzilla REST GET https://bugs.documentfoundation.org/rest/bug params={'permissive': 1, 'id': [108115, 112974], 'alias': []}
