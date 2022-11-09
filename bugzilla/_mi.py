@@ -126,6 +126,17 @@ def exit_patched(self, status=0, message=None):
     raise InterruptLoop
 
 
+def error_patched(self, message):
+    """ A patch on `argparse.ArgumentParser`
+
+    Prepare for Monkey Patch on built-in 
+    `argparse.ArgumentParser` to fit MI.
+    Later we would use just like `_print_message_patched` 
+    """
+    args = {'prog': self.prog, 'message': message}
+    self.exit(2, '%(prog)s: error: %(message)s' % args)
+
+
 class Bugzilla_patched(bugzilla.Bugzilla):
     """ Patch `bugzilla.Bugzilla` to fit MI
 
@@ -241,6 +252,7 @@ def setup_parser():
     """
     argparse.ArgumentParser._print_message = _print_message_patched #Monkey Patch
     argparse.ArgumentParser.exit           = exit_patched           #Monkey Patch
+    argparse.ArgumentParser.error          = error_patched          #Monkey Patch
     rootparser = _setup_root_parser()
     subparsers = rootparser.add_subparsers(dest="command")
     subparsers.required = True
