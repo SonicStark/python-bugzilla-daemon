@@ -20,6 +20,7 @@ import json
 import logging
 import os
 import re
+import shlex
 import socket
 import sys
 import types
@@ -554,7 +555,7 @@ def _main(unittest_bz_instance):
             if (NewCmd == "__REFRESH__"):
                 bz_REFRESH = True
                 continue
-            NewOpt = parser.parse_args(NewCmd.split())
+            NewOpt = parser.parse_args(args = shlex.split(NewCmd))
         except InterruptLoop:
             continue
         level_logging(NewOpt.debug, NewOpt.verbose)
