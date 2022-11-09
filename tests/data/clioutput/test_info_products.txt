@@ -1,2 +1,0 @@
-Prod 1 Test
-test-fake-product

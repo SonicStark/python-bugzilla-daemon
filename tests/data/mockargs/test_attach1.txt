@@ -1,8 +1,0 @@
-(['123456'],
- 'STRIPPED-BY-TESTSUITE',
- {'comment': 'some comment to go with it',
-  'content_type': 'text/x-patch',
-  'file_name': 'bz-attach-get1.txt',
-  'is_patch': True,
-  'is_private': True,
-  'summary': 'bz-attach-get1.txt'})

@@ -177,18 +177,6 @@ def _get_timeout(self):
     return float(envtimeout or DEFAULT_TIMEOUT)
 ```
 
-### 2.3.3. `__BUGZILLA_UNITTEST_DEBUG`
-
-It may be changed by `tests.conftest.pytest_configure`, but only affects the return value of `bugzilla._cli._is_unittest_debug`. It seems that the only function it has is to ensure that global log output level is `DEBUG`.
-
-:warning: As the author of this guide I cannot accurately determine its use at present, please use with care if you need.
-
-### 2.3.4. `__BUGZILLA_UNITTEST`
-
-Referred only in `tests.__init__` as `os.environ["__BUGZILLA_UNITTEST"] = "1"`. It is suspected that this is a bug, the statement is more likely to be `os.environ["__BUGZILLA_UNITTEST_DEBUG"] = "1"`.
-
-:warning: As the author of this guide I cannot accurately determine its use at present, please use with care if you need.
-
 ## 2.4 Exit *MI*
 
 It is recommand that do <kbd>Ctrl</kbd>+<kbd>C</kbd> or equivalent operation. The try-except mechanism in `MI` would catch `KeyboardInterrupt` and print

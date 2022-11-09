@@ -1,5 +1,0 @@
-{'include_fields': ['name',
-                    'id',
-                    'components.name',
-                    'components.default_assigned_to'],
- 'names': ['test-fake-product']}

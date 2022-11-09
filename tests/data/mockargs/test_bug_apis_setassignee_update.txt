@@ -1,4 +1,0 @@
-([1165434],
- {'assigned_to': 'foo@example.com',
-  'comment': {'comment': 'foocomment'},
-  'qa_contact': 'bar@example.com'})

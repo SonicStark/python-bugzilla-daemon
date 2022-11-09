@@ -1,1 +1,0 @@
-{'groups': {'remove': ['fedora_contrib']}, 'names': ['example name']}

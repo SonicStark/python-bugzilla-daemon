@@ -1,2 +1,0 @@
-{'include_fields': ['name', 'id', 'components.name'],
- 'names': ['test-fake-product']}

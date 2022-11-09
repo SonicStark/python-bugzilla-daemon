@@ -58,13 +58,10 @@ It introduces how our **MI** is built based on the previous **CLI** and its appl
 /python-bugzilla
 ](https://github.com/python-bugzilla/python-bugzilla), reading it will enable you to quickly understand and use this project.
 
-### `tests.md`
-
-Describe these things about running the unit test.
-
-### `assets`: demos & charts
+### `assets`
 
 | Item | Description |
 |------|-------------|
 | workflow.drawio     | It is drawn with [jgraph/drawio](https://github.com/jgraph/drawio) and shows how we maintain this project. |
 | workflow.drawio.png | Rendered from `workflow.drawio` for using in `python-bugzilla-mi/README.md`. |
+|demo_frontend.py|...|

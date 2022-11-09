@@ -1,3 +1,0 @@
-[example.com]
-api_key = MY-FAKE-KEY
-

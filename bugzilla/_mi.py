@@ -30,7 +30,6 @@ import xmlrpc.client
 import requests.exceptions
 
 import bugzilla
-from ._cli import _is_unittest_debug
 from ._cli import open_without_clobber
 from ._cli import _setup_root_parser
 from ._cli import _setup_action_new_parser
@@ -229,9 +228,6 @@ def level_logging(debug, verbose):
         log.setLevel(logging.INFO)
     else:
         log.setLevel(logging.WARN)
-
-    if _is_unittest_debug():
-        log.setLevel(logging.DEBUG)  # pragma: no cover
 
 
 ##################

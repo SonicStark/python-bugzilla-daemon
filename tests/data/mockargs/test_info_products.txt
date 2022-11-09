@@ -1,1 +1,0 @@
-{'ids': [1, 7], 'include_fields': ['name', 'id']}

@@ -1,2 +1,0 @@
-([1165434],
- {'cc': {'remove': ['foo2@example.com']}, 'comment': {'comment': 'foocomment'}})

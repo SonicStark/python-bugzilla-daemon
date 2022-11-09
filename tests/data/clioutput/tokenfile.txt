@@ -1,3 +1,0 @@
-[example.com]
-token = my-fake-token
-
