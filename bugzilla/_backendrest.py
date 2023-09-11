@@ -7,7 +7,7 @@ import logging
 import os
 
 from ._backendbase import _BackendBase
-from .exceptions import BugzillaError
+from .exceptions import BugzillaError, BugzillaHTTPError
 from ._util import listify
 
 
@@ -32,6 +32,23 @@ class _BackendREST(_BackendBase):
     #########################
     # Internal REST helpers #
     #########################
+    def _handle_error(self, e):
+        response = getattr(e, "response", None)
+        if response is None:
+            raise e  # pragma: no cover
+
+        if response.status_code in [400, 401, 404]:
+            self._handle_error_response(response.text)
+        raise e
+
+    def _handle_error_response(self, text):
+        try:
+            result = json.loads(text)
+        except json.JSONDecodeError:
+            return
+
+        if result.get("error"):
+            raise BugzillaError(result["message"], code=result["code"])
 
     def _handle_response(self, text):
         try:
@@ -40,7 +57,7 @@ class _BackendREST(_BackendBase):
             log.debug("Failed to parse REST response. Output is:\n%s", text)
             raise
 
-        if ret.get("error", False):
+        if ret.get("error", False):  # pragma: no cover
             raise BugzillaError(ret["message"], code=ret["code"])
         return ret
 
@@ -55,8 +72,13 @@ class _BackendREST(_BackendBase):
         else:
             data = json.dumps(paramdict or {})
 
-        response = self._bugzillasession.request(method, fullurl, data=data,
-                params=authparams)
+        try:
+            response = self._bugzillasession.request(
+                method, fullurl, data=data, params=authparams
+            )
+        except BugzillaHTTPError as e:
+            self._handle_error(e)
+
         return self._handle_response(response.text)
 
     def _get(self, *args, **kwargs):
