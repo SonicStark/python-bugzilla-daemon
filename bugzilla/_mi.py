@@ -371,6 +371,11 @@ def _format_output(bz, opt, buglist):
                 include_fields=include_fields,
                 exclude_fields=exclude_fields,
                 extra_fields=extra_fields)
+
+        if opt.with_comment:
+            for b in buglist:
+                b.getcomments_attr()
+
         if opt.output == 'json':
             _format_output_json(buglist)
         if opt.output == 'raw':
@@ -379,6 +384,8 @@ def _format_output(bz, opt, buglist):
 
     swrite(FLAG_HEAD_FORMAT)
     for b in buglist:
+        if opt.with_comment:
+            b.getcomments_attr()
         # pylint: disable=cell-var-from-loop
         def cb(matchobj):
             return _bug_field_repl_cb(bz, b, matchobj)

@@ -430,6 +430,13 @@ Output options
 These options are shared by several commands, for tweaking the text
 output of the command results.
 
+``--with-comment``
+^^^^^^^^^^^^^^
+
+**Syntax:** ``--with-comment``
+
+Fetch latest online comments just before output.
+This allows output a bug with its all comments.
 
 ``-f, --full``
 ^^^^^^^^^^^^^^

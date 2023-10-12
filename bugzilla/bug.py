@@ -299,6 +299,17 @@ class Bug(object):
         comment_list = self.bugzilla.get_comments([self.bug_id])
         return comment_list['bugs'][str(self.bug_id)]['comments']
 
+    def getcomments_attr(self):
+        """
+        Get online comments for this bug and add them as an attribute.
+        Will simply overwrite the old one if it exists.
+        It's useful if you want to handle a bug and its comments together.
+        Returns an array of comment dictionaries like `getcomments`.
+        """
+        c_ = self.bugzilla.get_comments([self.bug_id]) \
+                    ['bugs'][str(self.bug_id)]['comments']
+        self._update_dict({'comments': c_})
+        return c_
 
     #####################
     # Get/Set bug flags #

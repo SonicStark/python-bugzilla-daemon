@@ -146,6 +146,8 @@ def _setup_root_parser():
 
 def _parser_add_output_options(p):
     outg = p.add_argument_group("Output format options")
+    outg.add_argument('--with-comment', action='store_true', default=False,
+            help="Fetch latest comments and prepare for output")
     outg.add_argument('--full', action='store_const', dest='output',
             const='full', default='normal',
             help="output detailed bug info")
@@ -814,6 +816,11 @@ def _format_output(bz, opt, buglist):
                 include_fields=include_fields,
                 exclude_fields=exclude_fields,
                 extra_fields=extra_fields)
+        
+        if opt.with_comment:
+            for b in buglist:
+                b.getcomments_attr()
+
         if opt.output == 'json':
             _format_output_json(buglist)
         if opt.output == 'raw':
@@ -821,6 +828,8 @@ def _format_output(bz, opt, buglist):
         return
 
     for b in buglist:
+        if opt.with_comment:
+            b.getcomments_attr()
         # pylint: disable=cell-var-from-loop
         def cb(matchobj):
             return _bug_field_repl_cb(bz, b, matchobj)
