@@ -394,6 +394,16 @@ run a \(aqbugzilla \-\-debug query ...\(aq and look at the key names returned in
 the query results. Also, in most cases, using the name of the associated
 command line switch should work, like \-\-bug_status becomes
 %{bug_status}, etc.
+.SH ‘GET’ SPECIFIC OPTIONS
+.sp
+Specify bugs to get either by ID or by alias. Both of the two options 
+can be specified multiple times, which helps to get several bugs in one go.
+.SS \fB\-\-id\fP
+.sp
+Specify an individual bug by ID.
+.SS \fB\-\-alias\fP
+.sp
+Specify an individual bug by alias.
 .SH ‘QUERY’ SPECIFIC OPTIONS
 .sp
 Certain options can accept a comma separated list to query multiple

@@ -26,6 +26,7 @@ instance over REST or XMLRPC.
 | *command* is one of:
 | * login - log into the given bugzilla instance
 | * new - create a new bug
+| * get - get info and comments about bugs
 | * query - search for bugs matching given criteria
 | * modify - modify existing bugs
 | * attach - attach files to existing bugs, or get attachments
@@ -546,6 +547,28 @@ run a 'bugzilla --debug query ...' and look at the key names returned in
 the query results. Also, in most cases, using the name of the associated
 command line switch should work, like --bug_status becomes
 %{bug_status}, etc.
+
+
+‘get’ specific options
+========================
+
+Specify bugs to get either by ID or by alias. Both of the two options 
+can be specified multiple times, which helps to get several bugs in one go.
+
+
+``--id``
+^^^^^^^^^^^^^^^^^^^^^^
+
+**Syntax:** ``--id`` ID
+
+Specify an individual bug by ID.
+
+``--alias``
+^^^^^^^^^^^^^^^^^^^^^^
+
+**Syntax:** ``--alias`` ALIAS
+
+Specify an individual bug by alias.
 
 
 ‘query’ specific options

@@ -284,6 +284,21 @@ def _setup_action_new_parser(subparsers):
         help='Mark new comment as private')
 
 
+def _setup_action_get_parser(subparsers):
+    description = ("Get and output bugs by id/alias")
+    p = subparsers.add_parser("get", description=description)
+
+    _parser_add_output_options(p)
+
+    g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument('--id', action='append',
+        help="Specify an individual bug by ID."
+        "This can be specified multiple times.")
+    g.add_argument('--alias', action='append',
+        help="Specify an individual bug by alias."
+        "This can be specified multiple times.")
+
+
 def _setup_action_query_parser(subparsers):
     description = ("List bug reports that match the given criteria. "
         "Certain options can accept a comma separated list to query multiple "
@@ -426,6 +441,7 @@ def setup_parser():
     subparsers = rootparser.add_subparsers(dest="command")
     subparsers.required = True
     _setup_action_new_parser(subparsers)
+    _setup_action_get_parser(subparsers)
     _setup_action_query_parser(subparsers)
     _setup_action_info_parser(subparsers)
     _setup_action_modify_parser(subparsers)
@@ -446,6 +462,48 @@ def _merge_field_opts(query, fields, parser):
             query[f] = v
         except Exception:
             parser.error("Invalid field argument provided: %s" % (f))
+
+
+def _do_get(bz, opt):
+
+    class FakeBug(object):
+        """ Damn dirty hack of `bugzilla.bug.Bug`
+        We need this because `_format_output` does 
+        `getbugs([b.bug_id for b in buglist], ...)`,
+        and just `bug_id` here is enough :(
+        """
+        def __init__(self, bug_id):
+            self.bug_id = bug_id
+
+    """ See `bugzilla.base.Bugzilla._getbugs`
+    1. `_alias_or_int` will walk through each one in blst, serving for `bug_get`. 
+       However backendrest could finally concatenate alias and id in params 
+       with '&', the logical AND, then actually do a bug search beyond expect.
+       See https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug.html#search-bugs
+       But backendxmlrpc doesn't seem to have such a problem, since it uses 
+       ```
+       data["ids"] = listify(bug_ids) or []
+       data["ids"] += listify(aliases) or []
+       ```
+       So here we get bugs either by ID or by alias.
+    2. We should test and filter empty string, since it's boolean false
+       and leads to wrong `bugdict` appending in _getbugs.
+    """
+    if opt.id is None:
+        blst = [i  for i in opt.alias \
+                if (len(i) > 0) and not i.isdigit()]
+    else:
+        blst = [i  for i in opt.id   if i.isdigit()]
+
+    if opt.output in ['raw', 'json']:
+        buglist = [FakeBug(i)  for i in blst]
+    else:
+        buglist = bz.getbugs(blst,
+            include_fields = opt.includefield or None,
+            exclude_fields = opt.excludefield or None,
+            extra_fields   = opt.extrafield   or None)
+
+    return buglist
 
 
 def _do_query(bz, opt, parser):
@@ -1267,6 +1325,9 @@ def _main(unittest_bz_instance):
     if action == 'info':
         _do_info(bz, opt)
 
+    elif action == 'get':
+        buglist = _do_get(bz, opt)
+
     elif action == 'query':
         buglist = _do_query(bz, opt, parser)
 
@@ -1288,7 +1349,7 @@ def _main(unittest_bz_instance):
         raise RuntimeError("Unexpected action '%s'" % action)
 
     # If we're doing new/query/modify, output our results
-    if action in ['new', 'query']:
+    if action in ['new', 'query', 'get']:
         _format_output(bz, opt, buglist)
 
 

@@ -33,11 +33,13 @@ import bugzilla
 from ._cli import open_without_clobber
 from ._cli import _setup_root_parser
 from ._cli import _setup_action_new_parser
+from ._cli import _setup_action_get_parser
 from ._cli import _setup_action_query_parser
 from ._cli import _setup_action_info_parser
 from ._cli import _setup_action_modify_parser
 from ._cli import _setup_action_attach_parser
 from ._cli import _setup_action_login_parser
+from ._cli import _do_get
 from ._cli import _do_query
 from ._cli import _do_modify
 from ._cli import _do_new
@@ -257,6 +259,7 @@ def setup_parser():
     subparsers = rootparser.add_subparsers(dest="command")
     subparsers.required = True
     _setup_action_new_parser(subparsers)
+    _setup_action_get_parser(subparsers)
     _setup_action_query_parser(subparsers)
     _setup_action_info_parser(subparsers)
     _setup_action_modify_parser(subparsers)
@@ -614,6 +617,9 @@ def _main(unittest_bz_instance):
             if NewAct == 'info':
                 _do_info(bz, NewOpt)
 
+            elif NewAct == 'get':
+                buglist = _do_get(bz, NewOpt)
+
             elif NewAct == 'query':
                 buglist = _do_query(bz, NewOpt, parser)
 
@@ -635,7 +641,7 @@ def _main(unittest_bz_instance):
                 continue
 
             # If we're doing new/query/modify, output our results
-            if NewAct in ['new', 'query']:
+            if NewAct in ['new', 'query', 'get']:
                 _format_output(bz, NewOpt, buglist)
         except InterruptLoop:
             continue
