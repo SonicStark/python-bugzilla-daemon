@@ -552,9 +552,15 @@ command line switch should work, like --bug_status becomes
 ‘get’ specific options
 ========================
 
-Specify bugs to get either by ID or by alias. Both of the two options 
+Specify bugs to get either by ID or by alias. Both of the last two options 
 can be specified multiple times, which helps to get several bugs in one go.
 
+``--id-lst``
+^^^^^^^^^^^^^^^^^^^^^^
+
+**Syntax:** ``--id-lst`` ID
+
+Specify individual bugs by IDs, separated with commas.
 
 ``--id``
 ^^^^^^^^^^^^^^^^^^^^^^

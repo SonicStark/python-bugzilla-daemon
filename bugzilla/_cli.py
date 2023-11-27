@@ -291,6 +291,8 @@ def _setup_action_get_parser(subparsers):
     _parser_add_output_options(p)
 
     g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument('--id-lst',
+        help="Specify individual bugs by IDs, separated with commas")
     g.add_argument('--id', action='append',
         help="Specify an individual bug by ID."
         "This can be specified multiple times.")
@@ -489,11 +491,14 @@ def _do_get(bz, opt):
     2. We should test and filter empty string, since it's boolean false
        and leads to wrong `bugdict` appending in _getbugs.
     """
-    if opt.id is None:
+    if opt.id_lst is not None:
+        blst = [i  for i in opt.id_lst.split(",") \
+                                     if i.isdigit()]
+    elif opt.id is not None:
+        blst = [i  for i in opt.id   if i.isdigit()]
+    else:
         blst = [i  for i in opt.alias \
                 if (len(i) > 0) and not i.isdigit()]
-    else:
-        blst = [i  for i in opt.id   if i.isdigit()]
 
     if opt.output in ['raw', 'json']:
         buglist = [FakeBug(i)  for i in blst]
